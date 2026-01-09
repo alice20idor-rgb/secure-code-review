@@ -13,12 +13,11 @@ if (strlen($_SESSION['ccmsaid']==0)) {
 <html class="no-js" lang="en">
 <head>
    
-    <title>CCMS Search</title>
-    
+    <title>CCMS Reports</title>
+   
 
     <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
-
+   
 
     <link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
@@ -47,7 +46,7 @@ if (strlen($_SESSION['ccmsaid']==0)) {
             <div class="col-sm-4">
                 <div class="page-header float-left">
                     <div class="page-title">
-                        <h1>Search Users</h1>
+                        <h1>B/w Dates Report Details</h1>
                     </div>
                 </div>
             </div>
@@ -56,8 +55,8 @@ if (strlen($_SESSION['ccmsaid']==0)) {
                     <div class="page-title">
                         <ol class="breadcrumb text-right">
                             <li><a href="dashboard.php">Dashboard</a></li>
-                            <li><a href="search.php">Search Users</a></li>
-                            <li class="active">Users</li>
+                            <li><a href="bwdates-report-ds.php">Between Dates Reports</a></li>
+                            <li class="active">B/w Dates Report Details</li>
                         </ol>
                     </div>
                 </div>
@@ -70,43 +69,18 @@ if (strlen($_SESSION['ccmsaid']==0)) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <strong class="card-title">Search Users</strong>
+                                <strong class="card-title">Report Details</strong>
                             </div>
-
-<form name="search" method="post" style="padding-top: 20px" >
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card-box">
-                                   
-                                   
-                                       <div class="form-group row">
-                                                        <label class="col-4 col-form-label" for="example-email" style="padding-left: 50px"><strong>Search by Username or Entry ID</strong></label>
-                                                        <div class="col-6">
-                                                            <input id="searchdata" type="text" name="searchdata" required="true" class="form-control">
-                                                        </div>
-                                                    </div> 
-
-                                                   <div class="card-footer">
-                                                       <p style="text-align: center;"><button type="submit" class="btn btn-primary btn-sm" name="search" id="submit">
-                                                            <i class="fa fa-dot-circle-o"></i> Search
-                                                        </button></p>
-                                                        
-                                                    </div>
-                                                    </div> 
-                                    
-       </form>
-
-
-<?php
-if(isset($_POST['search']))
-{ 
-
-$sdata=$_POST['searchdata'];
-  ?>
-  <h4 align="center">Result against "<?php echo $sdata;?>" keyword </h4> 
-
-
                             <div class="card-body">
+
+                                    <?php
+$fdate=$_POST['fromdate'];
+$tdate=$_POST['todate'];
+
+?>
+<h5 align="center" style="color:blue">Report from <?php echo $fdate?> to <?php echo $tdate?></h5>
+<hr />
+
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -114,37 +88,30 @@ $sdata=$_POST['searchdata'];
                   <th>S.NO</th>
             
                   <th>Entry ID</th>
-                      <th>Full Name</th>  
-                      <th>In Time</th>  
+                    <th>Full Name</th> 
+                    <th>In Time</th>   
                    <th>Action</th>
                 </tr>
                                         </tr>
                                         </thead>
                                     <?php
-$ret=mysqli_query($con,"select *from tblusers where EntryID like '%$sdata%' || UserName like  '%$sdata%' ");
-$num=mysqli_num_rows($ret);
-if($num>0){
+$ret=mysqli_query($con,"select *from tblusers where date(InTime) between '$fdate' and '$tdate'");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
-    ?>
+
+?>
               
                 <tr>
                   <td><?php echo $cnt;?></td>
             
                   <td><?php  echo $row['EntryID'];?></td>
                   <td><?php  echo $row['UserName'];?></td>
-                   <td><?php  echo $row['InTime'];?></td>
+                  <td><?php  echo $row['InTime'];?></td>
                   <td><a href="view-user-detail.php?upid=<?php echo $row['ID'];?>" class="btn btn-primary btn-sm">View</a></td>
                 </tr>
-                 <?php 
+                <?php 
 $cnt=$cnt+1;
-} } else { ?>
-  <tr>
-    <td colspan="8"> No record found against this search</td>
-
-  </tr>
-   
-<?php } }?>
+}?>
 
                                 </table>
                             </div>
